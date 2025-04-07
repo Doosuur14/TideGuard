@@ -36,6 +36,7 @@ final class LoginScreenView: UIView {
     weak var delegate: LoginViewDelegate?
 
     private func setUpFunctions() {
+        setUpAppname()
         setupEmail()
         setupPassword()
         setupLoginButton()
@@ -47,6 +48,17 @@ final class LoginScreenView: UIView {
         addTapGestureToDismissKeyboard()
     }
 
+    private func setUpAppname() {
+        addSubview(appName)
+        appName.text = "TideGuard"
+        appName.textColor = UIColor(named: "MainColor")
+        appName.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        appName.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
+            make.centerX.equalToSuperview()
+        }
+    }
+
     private func setupEmail() {
         addSubview(email)
         email.placeholder = "Email"
@@ -54,8 +66,9 @@ final class LoginScreenView: UIView {
         email.borderStyle = .roundedRect
         email.autocapitalizationType = .none
         email.textColor = UIColor(named: "SubtitleColor")
+        email.font = UIFont.systemFont(ofSize: 16)
         email.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(70)
+            make.top.equalTo(appName.snp.bottom).offset(70)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(50)
@@ -70,6 +83,7 @@ final class LoginScreenView: UIView {
         password.isSecureTextEntry = true
         password.borderStyle = .roundedRect
         password.textColor = UIColor(named: "SubtitleColor")
+        password.font = UIFont.systemFont(ofSize: 16)
         password.snp.makeConstraints { make in
             make.top.equalTo(email.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(16)

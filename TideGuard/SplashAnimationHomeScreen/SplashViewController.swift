@@ -10,17 +10,28 @@ import UIKit
 class SplashViewController: UIViewController {
 
     var splashView: SplashView?
+    let animationDuration: TimeInterval = 5.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        splashView?.onAnimationComplete = { [weak self] in
+            self?.transitionToLogin()
+        }
     }
 
     private func setupView() {
         splashView = SplashView(frame: view.bounds)
         view = splashView
-//        splashView?.backgroundColor = UIColor(named: "MainColor")
-        splashView?.backgroundColor = UIColor(red: 230/255, green: 240/255, blue: 250/255, alpha: 1)
+       // splashView?.backgroundColor = UIColor(red: 230/255, green: 240/255, blue: 250/255, alpha: 1)
+    }
+
+    func transitionToLogin() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            let loginVC = LoginViewController()
+            loginVC.modalPresentationStyle = .fullScreen
+            self.present(loginVC, animated: true, completion: nil)
+        }
     }
 
 }
