@@ -17,8 +17,7 @@ final class RegistrationScreenView: UIView {
     lazy var lastName: UITextField = UITextField()
     lazy var email: UITextField = UITextField()
     lazy var password: UITextField = UITextField()
-    lazy var countryOfOrigin: UITextField = UITextField()
-    lazy var cityOfResidence: UITextField = UITextField()
+    lazy var city: UITextField = UITextField()
     lazy var terms: UILabel = UILabel()
     lazy var conditions: UILabel = UILabel()
     lazy var registerButton: UIButton = UIButton()
@@ -40,8 +39,6 @@ final class RegistrationScreenView: UIView {
         setUpLastName()
         setUpEmail()
         setUpPassword()
-        setUpCountryOfOrigin()
-        setUpResidence()
         setUpTerms()
         setUpConditions()
         setUpRegisterButton()
@@ -125,32 +122,15 @@ final class RegistrationScreenView: UIView {
         }
     }
 
-    private func setUpCountryOfOrigin() {
-        addSubview(countryOfOrigin)
-        countryOfOrigin.placeholder = "Nationality"
-        countryOfOrigin.backgroundColor = .clear
-        countryOfOrigin.borderStyle = .roundedRect
-        countryOfOrigin.delegate = self
-        countryOfOrigin.textColor = UIColor(named: "SubtitleColor")
-        countryOfOrigin.font = UIFont.systemFont(ofSize: 16)
-        countryOfOrigin.snp.makeConstraints { make in
+    private func setUpCity() {
+        addSubview(city)
+        city.placeholder = "City"
+        city.backgroundColor = .clear
+        city.borderStyle = .roundedRect
+        city.delegate = self
+        city.textColor = UIColor(named: "SubtitleColor")
+        city.snp.makeConstraints { make in
             make.top.equalTo(password.snp.bottom).offset(20)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(50)
-        }
-    }
-
-    private func setUpResidence() {
-        addSubview(cityOfResidence)
-        cityOfResidence.placeholder = "City Of Residence"
-        cityOfResidence.backgroundColor = .clear
-        cityOfResidence.borderStyle = .roundedRect
-        cityOfResidence.delegate = self
-        cityOfResidence.textColor = UIColor(named: "SubtitleColor")
-        cityOfResidence.font = UIFont.systemFont(ofSize: 16)
-        cityOfResidence.snp.makeConstraints { make in
-            make.top.equalTo(countryOfOrigin.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(50)
@@ -163,7 +143,7 @@ final class RegistrationScreenView: UIView {
         terms.font = UIFont.systemFont(ofSize: 10, weight: .light)
         terms.textColor = UIColor(named: "SubtitleColor")
         terms.snp.makeConstraints { make in
-            make.top.equalTo(cityOfResidence.snp.bottom).offset(30)
+            make.top.equalTo(password.snp.bottom).offset(50)
             make.centerX.equalToSuperview()
 
         }
@@ -224,18 +204,14 @@ extension RegistrationScreenView: UITextFieldDelegate {
         let isLastNameEmpty = lastName.isEmptyTextField()
         let isEmailEmpty = email.isEmptyTextField()
         let isPasswordEmpty = password.isEmptyTextField()
-        let isCountryEmpty = countryOfOrigin.isEmptyTextField()
-        let isCityEmpty = cityOfResidence.isEmptyTextField()
-        if isEmailEmpty || isPasswordEmpty || isFirstNameEmpty || isLastNameEmpty || isCountryEmpty || isCityEmpty  {
+        if isEmailEmpty || isPasswordEmpty || isFirstNameEmpty || isLastNameEmpty {
             return nil
         }
         return UserRegistrationData(
             firstname: firstName.text,
             lastname: lastName.text,
             emailText: email.text,
-            passwordText: password.text,
-            country: countryOfOrigin.text,
-            city: cityOfResidence.text
+            passwordText: password.text
         )
     }
 }
@@ -245,7 +221,5 @@ struct UserRegistrationData {
     let lastname: String?
     let emailText: String?
     let passwordText: String?
-    let country: String?
-    let city: String?
 }
 
