@@ -19,7 +19,9 @@ protocol RegistrationProtocol: ObservableObject where ObjectWillChangePublisher.
                   firstName: String,
                   lastName: String,
                   email: String,
-                  password: String)
+                  password: String, city: String)
+
+    func goToLoginController()
 }
 
 

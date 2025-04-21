@@ -8,9 +8,9 @@
 import Foundation
 
 struct AppUser: Codable {
-    let userId: Int
-    let firstName: String?
-    let lastName: String?
+    let id: Int
+    let firstname: String?
+    let lastname: String?
     let email: String?
     let password: String?
     let city: String?

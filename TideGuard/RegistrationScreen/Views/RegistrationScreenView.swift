@@ -9,6 +9,7 @@ import UIKit
 
 protocol RegistrationDelegate: AnyObject {
     func didPressRegButton()
+    func didPressAlreadyRegisteredButton()
 }
 
 final class RegistrationScreenView: UIView {
@@ -21,6 +22,7 @@ final class RegistrationScreenView: UIView {
     lazy var terms: UILabel = UILabel()
     lazy var conditions: UILabel = UILabel()
     lazy var registerButton: UIButton = UIButton()
+    lazy var alreadyRegistered: UIButton = UIButton()
 
     weak var delegate: RegistrationDelegate?
 
@@ -39,9 +41,11 @@ final class RegistrationScreenView: UIView {
         setUpLastName()
         setUpEmail()
         setUpPassword()
+        setUpCity()
         setUpTerms()
         setUpConditions()
         setUpRegisterButton()
+        setUpAlreadyReg()
         addTapGestureToDismissKeyboard()
     }
 
@@ -124,7 +128,7 @@ final class RegistrationScreenView: UIView {
 
     private func setUpCity() {
         addSubview(city)
-        city.placeholder = "City"
+        city.placeholder = "State"
         city.backgroundColor = .clear
         city.borderStyle = .roundedRect
         city.delegate = self
@@ -143,7 +147,7 @@ final class RegistrationScreenView: UIView {
         terms.font = UIFont.systemFont(ofSize: 10, weight: .light)
         terms.textColor = UIColor(named: "SubtitleColor")
         terms.snp.makeConstraints { make in
-            make.top.equalTo(password.snp.bottom).offset(50)
+            make.top.equalTo(city.snp.bottom).offset(50)
             make.centerX.equalToSuperview()
 
         }
@@ -180,6 +184,33 @@ final class RegistrationScreenView: UIView {
         }
     }
 
+    private func setUpAlreadyReg() {
+        addSubview(alreadyRegistered)
+        alreadyRegistered.setTitle("I already have an account", for: .normal)
+        alreadyRegistered.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        alreadyRegistered.setTitleColor(UIColor(named: "MainColor"), for: .normal)
+        alreadyRegistered.isEnabled = true
+//        alreadyRegistered.backgroundColor = UIColor(named: "Color2")
+//        alreadyRegistered.clipsToBounds = true
+//        alreadyRegistered.layer.cornerRadius = 10
+        let action = UIAction { [weak self] _ in
+            self?.delegate?.didPressAlreadyRegisteredButton()
+        }
+        alreadyRegistered.addAction(action, for: .touchUpInside)
+        alreadyRegistered.snp.makeConstraints { make in
+            make.top.equalTo(registerButton.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+//            make.leading.equalToSuperview().offset(16)
+//            make.trailing.equalToSuperview().offset(-16)
+            make.height.equalTo(50)
+        }
+    }
+
+
+
+
+
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -193,9 +224,6 @@ final class RegistrationScreenView: UIView {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         addGestureRecognizer(tapGesture)
     }
-
-
-    
 }
 
 extension RegistrationScreenView: UITextFieldDelegate {
@@ -204,6 +232,7 @@ extension RegistrationScreenView: UITextFieldDelegate {
         let isLastNameEmpty = lastName.isEmptyTextField()
         let isEmailEmpty = email.isEmptyTextField()
         let isPasswordEmpty = password.isEmptyTextField()
+        let isCityEmpty = city.isEmptyTextField()
         if isEmailEmpty || isPasswordEmpty || isFirstNameEmpty || isLastNameEmpty {
             return nil
         }
@@ -211,7 +240,8 @@ extension RegistrationScreenView: UITextFieldDelegate {
             firstname: firstName.text,
             lastname: lastName.text,
             emailText: email.text,
-            passwordText: password.text
+            passwordText: password.text,
+            cityText: city.text
         )
     }
 }
@@ -221,5 +251,5 @@ struct UserRegistrationData {
     let lastname: String?
     let emailText: String?
     let passwordText: String?
+    let cityText: String?
 }
-

@@ -6,3 +6,14 @@
 //
 
 import Foundation
+import UIKit
+
+class LoginModuleBuilder {
+    func buildLogin(output: LoginOutput) -> UIViewController {
+        let viewModel = LoginScreenViewModel()
+        viewModel.delegate = output
+//        let viewController = LoginViewController(viewModel: viewModel)
+        let viewController = LoginViewController()
+        return viewController
+    }
+}

@@ -11,7 +11,6 @@ import Combine
 class RegistrationScreenViewController<ViewModel:
                                             RegistrationViewModelProtocol>: UIViewController, RegistrationDelegate {
 
-
     var registrationView: RegistrationScreenView?
     let viewModel: ViewModel
     private var cancellables: Set<AnyCancellable> = []
@@ -19,8 +18,9 @@ class RegistrationScreenViewController<ViewModel:
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpView()
-
+        configureIO()
     }
+
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -58,6 +58,7 @@ class RegistrationScreenViewController<ViewModel:
     }
 
     func didPressRegButton() {
+        print("button was pressed")
         guard let form = registrationView?.configureSignUpForm() else {
             AlertManager.shared.showEmptyFieldAlert(viewCon: self)
             return
@@ -65,7 +66,10 @@ class RegistrationScreenViewController<ViewModel:
         viewModel.register(.didTapRegisterButton, firstName: form.firstname ?? "",
                            lastName: form.lastname ?? "",
                            email: form.emailText ?? "",
-                           password: form.passwordText ?? "")
+                           password: form.passwordText ?? "", city: form.cityText ?? "")
     }
 
+    func didPressAlreadyRegisteredButton() {
+        viewModel.goToLoginController()
+    }
 }

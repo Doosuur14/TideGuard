@@ -9,10 +9,17 @@ import Foundation
 import Combine
 
 protocol LoginMainViewModelProtocol: UIKitViewModel where State == LoginViewState, Intent == LoginViewIntent {
-    
+    var delegate: LoginOutput? { get set }
+}
+
+protocol LoginOutput: AnyObject {
+    func goToSignUpController()
+    func signedInUser()
 }
 
 final class LoginScreenViewModel: LoginMainViewModelProtocol {
+
+    weak var delegate: LoginOutput?
 
     @Published private(set) var state: LoginViewState {
         didSet {
@@ -32,6 +39,10 @@ final class LoginScreenViewModel: LoginMainViewModelProtocol {
 
     func trigger(_ intent: LoginViewIntent, email: String, password: String) {
         
+    }
+
+    func goToSignUpController() {
+        delegate?.goToSignUpController()
     }
 
 

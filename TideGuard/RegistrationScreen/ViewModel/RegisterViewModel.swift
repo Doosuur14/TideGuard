@@ -34,10 +34,10 @@ final class RegistrationModel: RegistrationViewModelProtocol {
         self.state = .initial
     }
 
-    func register(_ intent: RegisterIntent, firstName: String, lastName: String, email: String, password: String) {
+    func register(_ intent: RegisterIntent, firstName: String, lastName: String, email: String, password: String, city: String) {
         switch intent {
         case.didTapRegisterButton:
-            AuthService.shared.register(firstName: firstName, lastName: lastName, email: email, password: password) { result in
+            AuthService.shared.register(firstName: firstName, lastName: lastName, email: email, password: password, city: city) { result in
                 switch result {
                 case .success:
                     self.state = .isregisteredSuccessfully
