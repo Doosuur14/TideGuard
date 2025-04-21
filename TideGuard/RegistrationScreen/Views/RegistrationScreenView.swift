@@ -9,6 +9,7 @@ import UIKit
 
 protocol RegistrationDelegate: AnyObject {
     func didPressRegButton()
+    func didPressAlreadyRegisteredButton()
 }
 
 final class RegistrationScreenView: UIView {
@@ -17,11 +18,11 @@ final class RegistrationScreenView: UIView {
     lazy var lastName: UITextField = UITextField()
     lazy var email: UITextField = UITextField()
     lazy var password: UITextField = UITextField()
-    lazy var countryOfOrigin: UITextField = UITextField()
-    lazy var cityOfResidence: UITextField = UITextField()
+    lazy var city: UITextField = UITextField()
     lazy var terms: UILabel = UILabel()
     lazy var conditions: UILabel = UILabel()
     lazy var registerButton: UIButton = UIButton()
+    lazy var alreadyRegistered: UIButton = UIButton()
 
     weak var delegate: RegistrationDelegate?
 
@@ -40,11 +41,11 @@ final class RegistrationScreenView: UIView {
         setUpLastName()
         setUpEmail()
         setUpPassword()
-        setUpCountryOfOrigin()
-        setUpResidence()
+        setUpCity()
         setUpTerms()
         setUpConditions()
         setUpRegisterButton()
+        setUpAlreadyReg()
         addTapGestureToDismissKeyboard()
     }
 
@@ -125,32 +126,15 @@ final class RegistrationScreenView: UIView {
         }
     }
 
-    private func setUpCountryOfOrigin() {
-        addSubview(countryOfOrigin)
-        countryOfOrigin.placeholder = "Nationality"
-        countryOfOrigin.backgroundColor = .clear
-        countryOfOrigin.borderStyle = .roundedRect
-        countryOfOrigin.delegate = self
-        countryOfOrigin.textColor = UIColor(named: "SubtitleColor")
-        countryOfOrigin.font = UIFont.systemFont(ofSize: 16)
-        countryOfOrigin.snp.makeConstraints { make in
+    private func setUpCity() {
+        addSubview(city)
+        city.placeholder = "State"
+        city.backgroundColor = .clear
+        city.borderStyle = .roundedRect
+        city.delegate = self
+        city.textColor = UIColor(named: "SubtitleColor")
+        city.snp.makeConstraints { make in
             make.top.equalTo(password.snp.bottom).offset(20)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(50)
-        }
-    }
-
-    private func setUpResidence() {
-        addSubview(cityOfResidence)
-        cityOfResidence.placeholder = "City Of Residence"
-        cityOfResidence.backgroundColor = .clear
-        cityOfResidence.borderStyle = .roundedRect
-        cityOfResidence.delegate = self
-        cityOfResidence.textColor = UIColor(named: "SubtitleColor")
-        cityOfResidence.font = UIFont.systemFont(ofSize: 16)
-        cityOfResidence.snp.makeConstraints { make in
-            make.top.equalTo(countryOfOrigin.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.trailing.equalToSuperview().offset(-16)
             make.height.equalTo(50)
@@ -163,7 +147,7 @@ final class RegistrationScreenView: UIView {
         terms.font = UIFont.systemFont(ofSize: 10, weight: .light)
         terms.textColor = UIColor(named: "SubtitleColor")
         terms.snp.makeConstraints { make in
-            make.top.equalTo(cityOfResidence.snp.bottom).offset(30)
+            make.top.equalTo(city.snp.bottom).offset(50)
             make.centerX.equalToSuperview()
 
         }
@@ -200,6 +184,33 @@ final class RegistrationScreenView: UIView {
         }
     }
 
+    private func setUpAlreadyReg() {
+        addSubview(alreadyRegistered)
+        alreadyRegistered.setTitle("I already have an account", for: .normal)
+        alreadyRegistered.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .light)
+        alreadyRegistered.setTitleColor(UIColor(named: "MainColor"), for: .normal)
+        alreadyRegistered.isEnabled = true
+//        alreadyRegistered.backgroundColor = UIColor(named: "Color2")
+//        alreadyRegistered.clipsToBounds = true
+//        alreadyRegistered.layer.cornerRadius = 10
+        let action = UIAction { [weak self] _ in
+            self?.delegate?.didPressAlreadyRegisteredButton()
+        }
+        alreadyRegistered.addAction(action, for: .touchUpInside)
+        alreadyRegistered.snp.makeConstraints { make in
+            make.top.equalTo(registerButton.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+//            make.leading.equalToSuperview().offset(16)
+//            make.trailing.equalToSuperview().offset(-16)
+            make.height.equalTo(50)
+        }
+    }
+
+
+
+
+
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -213,9 +224,6 @@ final class RegistrationScreenView: UIView {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         addGestureRecognizer(tapGesture)
     }
-
-
-    
 }
 
 extension RegistrationScreenView: UITextFieldDelegate {
@@ -224,9 +232,8 @@ extension RegistrationScreenView: UITextFieldDelegate {
         let isLastNameEmpty = lastName.isEmptyTextField()
         let isEmailEmpty = email.isEmptyTextField()
         let isPasswordEmpty = password.isEmptyTextField()
-        let isCountryEmpty = countryOfOrigin.isEmptyTextField()
-        let isCityEmpty = cityOfResidence.isEmptyTextField()
-        if isEmailEmpty || isPasswordEmpty || isFirstNameEmpty || isLastNameEmpty || isCountryEmpty || isCityEmpty  {
+        let isCityEmpty = city.isEmptyTextField()
+        if isEmailEmpty || isPasswordEmpty || isFirstNameEmpty || isLastNameEmpty {
             return nil
         }
         return UserRegistrationData(
@@ -234,8 +241,7 @@ extension RegistrationScreenView: UITextFieldDelegate {
             lastname: lastName.text,
             emailText: email.text,
             passwordText: password.text,
-            country: countryOfOrigin.text,
-            city: cityOfResidence.text
+            cityText: city.text
         )
     }
 }
@@ -245,7 +251,5 @@ struct UserRegistrationData {
     let lastname: String?
     let emailText: String?
     let passwordText: String?
-    let country: String?
-    let city: String?
+    let cityText: String?
 }
-
