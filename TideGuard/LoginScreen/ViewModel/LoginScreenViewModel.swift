@@ -38,12 +38,26 @@ final class LoginScreenViewModel: LoginMainViewModelProtocol {
     }
 
     func trigger(_ intent: LoginViewIntent, email: String, password: String) {
-        
+
+        switch intent {
+        case .didTapLoginButton:
+            AuthService.shared.login(email: email, password: password) { [weak self] result in
+                switch result {
+                case .success:
+                    UserDefaults.standard.set(email, forKey: "curUser")
+                    self?.state = .isloggedSuccessfully
+                    self?.delegate?.signedInUser()
+                case .failure(let error):
+                    print("Login failed")
+                    self?.state = .loginFailed
+                }
+            }
+        }
+
     }
 
     func goToSignUpController() {
         delegate?.goToSignUpController()
     }
-
 
 }

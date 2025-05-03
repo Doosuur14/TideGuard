@@ -12,8 +12,7 @@ class LoginModuleBuilder {
     func buildLogin(output: LoginOutput) -> UIViewController {
         let viewModel = LoginScreenViewModel()
         viewModel.delegate = output
-//        let viewController = LoginViewController(viewModel: viewModel)
-        let viewController = LoginViewController()
+        let viewController = LoginViewController(viewModel: viewModel)
         return viewController
     }
 }

@@ -10,7 +10,8 @@ import UIKit
 
 class SafetyModuleBuilder {
     func buildMain() -> UIViewController {
-        let viewController = SafetyViewController()
+        let viewModel = SafetyViewModel()
+        let viewController = SafetyViewController(viewModel: viewModel)
         return viewController
     }
 }

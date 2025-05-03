@@ -6,24 +6,63 @@
 //
 
 import UIKit
+import MapKit
 
-class SafetyViewController: UIViewController {
+class SafetyViewController: UIViewController, MKMapViewDelegate {
+
+    var safetyView: SafetyView?
+    let viewModel: SafetyViewModel
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpFunc()
+        configureIO()
+        viewModel.loadMap()
+        viewModel.loadEvacuationData()
+    }
 
-        // Do any additional setup after loading the view.
+    init(viewModel: SafetyViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    */
 
+    private func setUpFunc() {
+        safetyView = SafetyView(frame: view.bounds)
+        view  = safetyView
+        view.backgroundColor = .systemBackground
+        safetyView?.mapView.delegate = self
+    }
+
+    private func configureIO() {
+        print("calling evacuation")
+        viewModel.onEvacuationUpdate = { [weak self] text in
+            self?.safetyView?.evacuationLabel.text = text
+            print("success")
+        }
+        viewModel.onMapUpdate = { [weak self] center in
+            let region = MKCoordinateRegion(center: center, latitudinalMeters: 50000, longitudinalMeters: 50000)
+            self?.safetyView?.mapView.setRegion(region, animated: true)
+        }
+        viewModel.onFloodAreasUpdate = { [weak self] floodAreas in
+            guard let mapView = self?.safetyView?.mapView else { return }
+            mapView.addOverlays(floodAreas)
+//            guard let mapView = self?.safetyView?.mapView else { return }
+//            floodAreas.forEach { mapView.addOverlay($0) }
+        }
+    }
+
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let polygon = overlay as? MKPolygon {
+            let renderer = MKPolygonRenderer(polygon: polygon)
+            renderer.fillColor = UIColor.red.withAlphaComponent(0.5)
+            renderer.strokeColor = UIColor.red
+            renderer.lineWidth = 2
+            return renderer
+        }
+        return MKOverlayRenderer(overlay: overlay)
+    }
 }
