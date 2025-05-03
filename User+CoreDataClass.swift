@@ -2,7 +2,7 @@
 //  User+CoreDataClass.swift
 //  TideGuard
 //
-//  Created by Faki Doosuur Doris on 14.04.2025.
+//  Created by Faki Doosuur Doris on 24.04.2025.
 //
 //
 
