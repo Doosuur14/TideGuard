@@ -13,7 +13,12 @@ class SafetyView: UIView {
     lazy var containerView: UIView = UIView()
     lazy var mapView: MKMapView = MKMapView()
     lazy var evacuationLabel: UILabel = UILabel()
-    lazy var weatherLabel: UILabel = UILabel()
+  //  lazy var weatherLabel: UILabel = UILabel()
+    lazy var weatherContainer: UIView = UIView()
+    lazy var weatherImageView: UIImageView = UIImageView()
+    lazy var weatherDescriptionLabel: UILabel = UILabel()
+    lazy var temperatureLabel: UILabel = UILabel()
+    lazy var humidityLabel: UILabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,13 +34,14 @@ class SafetyView: UIView {
         setUpContainer()
         setUpMap()
         setUpEvacuationLabel()
-        setUpWeatherLabel()
+        setUpWeatherContainer()
+       // setUpWeatherLabel()
 
     }
 
     private func setUpSegments() {
         addSubview(segmentedControl)
-       // segmentedControl.tintColor = UIColor(named: "MainColor")
+        // segmentedControl.tintColor = UIColor(named: "MainColor")
         segmentedControl.backgroundColor = UIColor(named: "BackgroundColor")
         segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
         segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor(named: "MainColor") as Any], for: .selected)
@@ -65,7 +71,7 @@ class SafetyView: UIView {
     private func setUpEvacuationLabel() {
         containerView.addSubview(evacuationLabel)
         evacuationLabel.font = .systemFont(ofSize: 15, weight: .bold)
-        evacuationLabel.textColor = UIColor(named: "mainColor")
+        evacuationLabel.textColor = UIColor(named: "MainColor")
         evacuationLabel.numberOfLines = 0
         evacuationLabel.isHidden = true
         evacuationLabel.snp.makeConstraints { make in
@@ -75,25 +81,89 @@ class SafetyView: UIView {
         }
     }
 
-    private func setUpWeatherLabel() {
-        containerView.addSubview(weatherLabel)
-        weatherLabel.numberOfLines = 0
-        weatherLabel.isHidden = true
-        weatherLabel.snp.makeConstraints { make in
-            make.edges.equalTo(containerView)
+
+    private func setUpWeatherContainer() {
+        containerView.addSubview(weatherContainer)
+        weatherContainer.backgroundColor = UIColor(named: "BackgroundColor")?.withAlphaComponent(0.9)
+        weatherContainer.layer.cornerRadius = 15
+        weatherContainer.clipsToBounds = true
+        containerView.addSubview(weatherContainer)
+        weatherContainer.isHidden = true
+        weatherContainer.snp.makeConstraints { make in
+            make.edges.equalTo(containerView).inset(16)
+        }
+
+        weatherImageView.contentMode = .scaleAspectFit
+        weatherContainer.addSubview(weatherImageView)
+        weatherImageView.snp.makeConstraints { make in
+            make.top.equalTo(weatherContainer.snp.top).offset(20)
+            make.centerX.equalTo(weatherContainer.snp.centerX)
+            make.width.height.equalTo(100)
+        }
+
+        weatherDescriptionLabel.font = .systemFont(ofSize: 18, weight: .medium)
+        weatherDescriptionLabel.textColor = UIColor(named: "MainColor")
+        weatherDescriptionLabel.textAlignment = .center
+        weatherContainer.addSubview(weatherDescriptionLabel)
+        weatherDescriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(weatherImageView.snp.bottom).offset(10)
+            make.centerX.equalTo(weatherContainer.snp.centerX)
+        }
+
+        temperatureLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        temperatureLabel.textColor = UIColor(named: "MainColor")
+        weatherContainer.addSubview(temperatureLabel)
+        temperatureLabel.snp.makeConstraints { make in
+            make.top.equalTo(weatherDescriptionLabel.snp.bottom).offset(10)
+            make.centerX.equalTo(weatherContainer.snp.centerX)
+        }
+
+        humidityLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        humidityLabel.textColor = UIColor(named: "MainColor")
+        weatherContainer.addSubview(humidityLabel)
+        humidityLabel.snp.makeConstraints { make in
+            make.top.equalTo(temperatureLabel.snp.bottom).offset(10)
+            make.centerX.equalTo(weatherContainer.snp.centerX)
+            make.bottom.lessThanOrEqualTo(weatherContainer.snp.bottom).offset(-20)
         }
     }
+
+
+//    private func setUpWeatherLabel() {
+//        containerView.addSubview(weatherLabel)
+//        weatherLabel.numberOfLines = 0
+//        weatherLabel.isHidden = true
+//        weatherLabel.snp.makeConstraints { make in
+//            make.edges.equalTo(containerView)
+//        }
+//    }
 
     @objc private func switchSection(_ sender: UISegmentedControl) {
         mapView.isHidden = true
         evacuationLabel.isHidden = true
-        weatherLabel.isHidden = true
+        weatherContainer.isHidden = true
 
         switch sender.selectedSegmentIndex {
         case 0: mapView.isHidden = false
         case 1: evacuationLabel.isHidden = false
-        case 2: weatherLabel.isHidden = false
+        case 2: weatherContainer.isHidden = false
         default: break
         }
+    }
+
+    func updateWeatherImage(with urlString: String?) {
+        guard let urlString = urlString, let url = URL(string: urlString) else {
+            weatherImageView.image = nil
+            return
+        }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.weatherImageView.image = image
+                }
+            } else {
+                print("Failed to load weather image: \(error?.localizedDescription ?? "No error")")
+            }
+        }.resume()
     }
 }

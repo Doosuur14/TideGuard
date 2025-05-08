@@ -19,6 +19,7 @@ class SafetyViewModel {
     var onEvacuationUpdate: ((String) -> Void)?
     var onMapUpdate: ((CLLocationCoordinate2D) -> Void)?
     var onFloodAreasUpdate: (([MKPolygon]) -> Void)?
+    var onWeatherUpdate: ((String, Double, Double, String?) -> Void)?
 
 
     func loadEvacuationData() {
@@ -47,7 +48,6 @@ class SafetyViewModel {
         let userCity = user?.city
         print("User Details: \(String(describing: user))")
         print("User city: \(String(describing: userCity))")
-
 
         WeatherService.shared.fetchFloodAreas(for: userCity ?? "") { [weak self] result in
             switch result {
@@ -89,4 +89,28 @@ class SafetyViewModel {
         }
     }
 
+    func fetchWeather() {
+        let user = AuthService.shared.getCurrentUser()
+        let userCity = user?.city
+        print("User Details for weather: \(String(describing: user))")
+        print("User city for weather: \(String(describing: userCity))")
+
+        WeatherService.shared.fetchWeather(for: userCity ?? "") { [weak self] result in
+            switch result {
+            case .success(let weatherData):
+                let description = weatherData.description ?? "N/A"
+                let temperature = weatherData.temperature ?? 0.0
+                let humidity = weatherData.humidity ?? 0.0
+                let imageUrl = weatherData.imageUrl
+                DispatchQueue.main.async {
+                    self?.onWeatherUpdate?(description, temperature, humidity, imageUrl)
+                }
+            case .failure(let error):
+                print("Failed to fetch weather: \(error)")
+                DispatchQueue.main.async {
+                    self?.onWeatherUpdate?("N/A", 0.0, 0.0, nil)
+                }
+            }
+        }
+    }
 }

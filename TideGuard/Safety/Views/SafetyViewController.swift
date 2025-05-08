@@ -19,6 +19,7 @@ class SafetyViewController: UIViewController, MKMapViewDelegate {
         configureIO()
         viewModel.loadMap()
         viewModel.loadEvacuationData()
+        viewModel.fetchWeather()
     }
 
     init(viewModel: SafetyViewModel) {
@@ -52,6 +53,13 @@ class SafetyViewController: UIViewController, MKMapViewDelegate {
             mapView.addOverlays(floodAreas)
 //            guard let mapView = self?.safetyView?.mapView else { return }
 //            floodAreas.forEach { mapView.addOverlay($0) }
+        }
+        viewModel.onWeatherUpdate = { [weak self] description, temperature, humidity, imageURL in
+            print("Updating weather UI - Description: \(description), Temp: \(temperature), Humidity: \(humidity), Image: \(imageURL ?? "None")")
+            self?.safetyView?.weatherDescriptionLabel.text = "Weather: \(description)"
+            self?.safetyView?.temperatureLabel.text = "Temp: \(String(format: "%.1f", temperature))°C"
+            self?.safetyView?.humidityLabel.text = "Humidity: \(String(format: "%.0f", humidity))%"
+            self?.safetyView?.updateWeatherImage(with: imageURL)
         }
     }
 
