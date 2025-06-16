@@ -20,9 +20,9 @@ final class AuthService {
 
     private func handleSuccessfulRegistration(user: AppUser, completion: @escaping (Result<AppUser, Error>) -> Void) {
         saveUserToCoreData(
-            id: Int64(user.id),
-            firstName: user.firstname ?? "",
-            lastName: user.lastname ?? "",
+            id: Int64(user.userId),
+            firstName: user.firstName ?? "",
+            lastName: user.lastName ?? "",
             email: user.email ?? "",
             password: user.password ?? "",
             city: user.city ?? ""
@@ -63,34 +63,47 @@ final class AuthService {
         AF.request(url, method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
             .validate()
             .responseDecodable(of: AppUser.self) { response in
+                if let data = response.data, let json = String(data: data, encoding: .utf8) {
+                    print("🗒️ Login response JSON:\n\(json)")
+                }
                 switch response.result {
                 case .success(let user):
                     print("User logged in: \(user)")
                     UserDefaults.standard.set(email, forKey: "userEmail")
-                    if AuthService.shared.getCurrentUser() == nil {
-                        self.handleSuccessfulRegistration(user: user, completion: completion)
-                    } else {
-                        completion(.success(user))
-                    }
                     completion(.success(user))
                 case .failure(let error):
                     print("Login failed: \(error.localizedDescription)")
+                    print(error)
                     completion(.failure(error))
                 }
             }
     }
 
     func getCurrentUser() -> User? {
+
+        guard let userEmail = UserDefaults.standard.string(forKey: "userEmail") else {
+            print("No user email found in UserDefaults")
+            return nil
+        }
+
         let fetchRequest: NSFetchRequest<User> = User.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "email == %@", userEmail)
+        fetchRequest.fetchLimit = 1
+
         do {
             let users = try context.fetch(fetchRequest)
-            return users.first
+            if let user = users.first {
+                print("Fetched current user: \(user.email ?? "No email")")
+                return user
+            } else {
+                print("No user found with email: \(userEmail)")
+                return nil
+            }
         } catch {
             print("Failed to fetch user: \(error)")
             return nil
         }
     }
-
 }
 
 
@@ -135,3 +148,4 @@ struct LoginRequest: Codable {
     let email: String
     let password: String
 }
+

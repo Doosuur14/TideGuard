@@ -47,7 +47,7 @@ final class LoginScreenViewModel: LoginMainViewModelProtocol {
                     UserDefaults.standard.set(email, forKey: "curUser")
                     self?.state = .isloggedSuccessfully
                     self?.delegate?.signedInUser()
-                case .failure(let error):
+                case .failure(_):
                     print("Login failed")
                     self?.state = .loginFailed
                 }

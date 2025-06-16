@@ -2,7 +2,7 @@
 //  User+CoreDataProperties.swift
 //  TideGuard
 //
-//  Created by Faki Doosuur Doris on 24.04.2025.
+//  Created by Faki Doosuur Doris on 12.05.2025.
 //
 //
 
@@ -22,6 +22,7 @@ extension User {
     @NSManaged public var lastName: String?
     @NSManaged public var password: String?
     @NSManaged public var userId: Int64
+    @NSManaged public var userProfileUrl: String?
 
 }
 

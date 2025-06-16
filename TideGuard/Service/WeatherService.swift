@@ -14,14 +14,9 @@ final class WeatherService {
 
     private init() {}
 
-    func fetchEvacuationData(completion: @escaping (Result<Evacuation, Error>) -> Void) {
-        let url = "\(baseURL)/user/evacuation"
-        guard let email = UserDefaults.standard.string(forKey: "userEmail") else {
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "User email not found"])))
-            return
-        }
-        let headers: HTTPHeaders = ["email": email]
-        AF.request(url, headers: headers)
+    func fetchEvacuationData(for city: String, completion: @escaping (Result<Evacuation, Error>) -> Void) {
+        let url = "\(baseURL)/evacuation/\(city)"
+        AF.request(url)
             .validate()
             .responseDecodable(of: Evacuation.self) { response in
                 switch response.result {

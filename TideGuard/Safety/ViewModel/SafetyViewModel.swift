@@ -24,11 +24,12 @@ class SafetyViewModel {
 
     func loadEvacuationData() {
         print("gooooooo")
-        if let cached = UserDefaults.standard.string(forKey: "evacuationData") {
-            evacuationData = cached
-            onEvacuationUpdate?(cached)
-        } else {
-            WeatherService.shared.fetchEvacuationData { [weak self] result in
+        let user = AuthService.shared.getCurrentUser()
+        let userCity = user?.city
+        print("User Details for evacuationdata: \(String(describing: user))")
+        print("User city for evacuationdata: \(String(describing: userCity))")
+        
+            WeatherService.shared.fetchEvacuationData (for: userCity ?? "") { [weak self] result in
                 switch result {
                 case .success(let evacuation):
                     let displayText = "Shelters in \(evacuation.city):\n\(evacuation.shelters)\nRoute:\n\(evacuation.routes)"
@@ -40,7 +41,7 @@ class SafetyViewModel {
                 }
             }
         }
-    }
+
 
 
     func loadMap() {
