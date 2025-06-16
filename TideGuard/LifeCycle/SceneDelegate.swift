@@ -6,20 +6,28 @@
 //
 
 import UIKit
+import UserNotifications
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
     var coordinator: AppCoordinator?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        UserDefaults.standard.removeObject(forKey: "curUser")
+        UNUserNotificationCenter.current().delegate = self 
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if let error = error {
+                print("Notification permission error: \(error)")
+            } else if granted {
+                print("Notification permission granted")
+            }
+        }
+
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
+        applyTheme()
 
         let navigationController = UINavigationController()
         coordinator = AppCoordinator(navigationController: navigationController)
@@ -27,6 +35,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
+
+    private func applyTheme() {
+        let isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
+        window?.overrideUserInterfaceStyle = isDarkMode ? .dark : .light
+    }
+
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound]) // Show alert and play sound when app is active
+    }
+
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
@@ -56,6 +75,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
-
+   
 }
 

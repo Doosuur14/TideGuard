@@ -13,7 +13,6 @@ class SafetyView: UIView {
     lazy var containerView: UIView = UIView()
     lazy var mapView: MKMapView = MKMapView()
     lazy var evacuationLabel: UILabel = UILabel()
-  //  lazy var weatherLabel: UILabel = UILabel()
     lazy var weatherContainer: UIView = UIView()
     lazy var weatherImageView: UIImageView = UIImageView()
     lazy var weatherDescriptionLabel: UILabel = UILabel()
@@ -35,15 +34,14 @@ class SafetyView: UIView {
         setUpMap()
         setUpEvacuationLabel()
         setUpWeatherContainer()
-       // setUpWeatherLabel()
 
     }
 
     private func setUpSegments() {
         addSubview(segmentedControl)
-        // segmentedControl.tintColor = UIColor(named: "MainColor")
-        segmentedControl.backgroundColor = UIColor(named: "BackgroundColor")
+        segmentedControl.backgroundColor = UIColor(named: "Color")
         segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
+        segmentedControl.selectedSegmentIndex = 0
         segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor(named: "MainColor") as Any], for: .selected)
         segmentedControl.addTarget(self, action: #selector(switchSection), for: .valueChanged)
         segmentedControl.snp.makeConstraints { make in
@@ -127,16 +125,6 @@ class SafetyView: UIView {
             make.bottom.lessThanOrEqualTo(weatherContainer.snp.bottom).offset(-20)
         }
     }
-
-
-//    private func setUpWeatherLabel() {
-//        containerView.addSubview(weatherLabel)
-//        weatherLabel.numberOfLines = 0
-//        weatherLabel.isHidden = true
-//        weatherLabel.snp.makeConstraints { make in
-//            make.edges.equalTo(containerView)
-//        }
-//    }
 
     @objc private func switchSection(_ sender: UISegmentedControl) {
         mapView.isHidden = true

@@ -14,6 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor(named: "MainColor") as Any], for: .normal)
+        UINavigationBar.appearance().tintColor = UIColor(named: "MainColor")
         return true
     }
 

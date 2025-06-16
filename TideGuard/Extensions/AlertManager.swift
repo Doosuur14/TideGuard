@@ -68,6 +68,11 @@ extension AlertManager {
         self.showAlert(viewController: viewCon, title: "FAILED",
                        message: "Update failed!")
     }
-    
+
+    func showSuccessfulReportAlert(viewCon: UIViewController) {
+        self.showAlert(viewController: viewCon, title: "Success",
+                       message: "Upload failed!")
+    }
+
 }
 
